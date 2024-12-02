@@ -1,0 +1,48 @@
+import { EsLDTInitConfig, EsLivingDetectionManager, KEY_NAME_ENUM, EsLivingDetectResult} from 'esldtsdk';
+
+export {EsLivingDetectResult,KEY_NAME_ENUM,EsLDTInitConfig};
+
+let mng:EsLivingDetectionManager=new EsLivingDetectionManager();
+
+/**
+ * 初始化接口 获得初始化数据
+ */
+export async function UTS_Verify(initConfigString:string):Promise<EsLivingDetectResult>{
+	let config:EsLDTInitConfig=new EsLDTInitConfig();
+	config.initConfig(initConfigString);
+	return await mng.verifyInit(config);
+}
+
+/**
+ * 人脸检测接口 跳转到人脸检测界面
+ */
+export async function UTS_StartLivingDetect(token:string):Promise<EsLivingDetectResult>{
+	return await mng.startLivingDetect(token);
+}
+
+
+/**
+ * 退出人脸检测界面的函数
+ */
+export function UTS_Exit(){
+	mng.exit();
+}
+
+
+/**
+ * 得到视频保存在本地的地址
+ * 
+ */
+export function UTS_GetLDTVideo(token:string):string{
+	return mng.getLDTVideo(token);
+}
+
+/**
+ * 重置sdk的初始化设置
+ */
+export function UTS_RestartLdt():boolean{
+	let res=false;
+	mng = new EsLivingDetectionManager();
+	res= true;
+	return res;
+}

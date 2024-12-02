@@ -1,0 +1,6 @@
+
+{
+  "dependencies": {
+	  "esldtsdk":"./libs/esldtSDK.har"
+  }
+}
