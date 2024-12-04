@@ -140,7 +140,6 @@
 					        // 请求出错
 					        },
 					});
-				console.log(token);
 				// let that = this;
 				// UTS_StartLivingDetect(token);
 				// that.msg = JSON.stringify(res.data);
