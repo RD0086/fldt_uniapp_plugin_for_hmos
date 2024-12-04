@@ -1,4 +1,5 @@
 import { EsLDTInitConfig, EsLivingDetectionManager, KEY_NAME_ENUM, EsLivingDetectResult} from 'esldtsdk';
+import router from '@ohos.router';
 
 export {EsLivingDetectResult,KEY_NAME_ENUM,EsLDTInitConfig};
 
@@ -26,6 +27,8 @@ export async function UTS_StartLivingDetect(token:string):Promise<EsLivingDetect
  */
 export function UTS_Exit(){
 	mng.exit();
+	router.back();
+	return;
 }
 
 
