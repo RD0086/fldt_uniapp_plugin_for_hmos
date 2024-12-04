@@ -36,8 +36,6 @@
 	  code: number;
 	  data: any;
 	}
-	//token
-	let token :string="";
 	
 	export default {
 		data() {
@@ -77,16 +75,13 @@
 		
 		methods: {
 			
-			/**
-			 * 获取初始化token
-			 */
-			getToken: async function () {
-			},
-			/**
-			 * 开始人脸检测
-			 */
+			
+			
+			
 			startLDT: async function () {
-				
+				/**
+				 * 获取初始化token
+				 */
 				
 				const configData: configInterface = {
 				      livingType: parseInt(this.livingType.toString()),
@@ -122,6 +117,9 @@
 							    } else {
 									str = JSON.parse(JSON.stringify(res.data)).token;
 								}
+								/**
+								 * 开始人脸检测
+								 */
 								UTS_StartLivingDetect(str).then(res => {
 									that.msg = JSON.stringify(JSON.stringify(res));
 									
