@@ -20,31 +20,31 @@
 
 <script lang="ts">
 	//导入鸿蒙uts插件中的函数
-	import {UTS_ExitLDT,UTS_Verify,UTS_StartLivingDetect,UTS_Exit,UTS_GetLDTVideo,UTS_RestartLdt,EsLivingDetectResult} from "@/uni_modules/esand-ldt"
+	import {UTS_ExitLDT,UTS_VerifyInit,UTS_StartLDT,UTS_Exit,UTS_GetLDTVideo,UTS_RestartLdt,EsLivingDetectResult} from "@/uni_modules/esand-ldt"
 	// TODO 替换成您自己的APPCODE(切勿泄漏), 如何获取APPCODE,可参考：https://esandinfo.yuque.com/docs/share/13ad611e-b9c3-4cf8-a9a8-fe23a419312e?#
 	 let ALIYUN_APPCODE = ''; // 阿里云网关APPCODE
-	
+
 	 // 从一砂云接入, 可参考文档： https://esandinfo.yuque.com/yv6e1k/aa4qsg/ghtqp7
 	 let ES_APPCODE = 'TODO'; // 一砂云网关APPCODE
 	 let ES_SECRET_KEY = 'TODO';// 一砂云网关密钥
 	 let SECRET_KEY = '';
-	 
+
 	interface authSettingInterface {
-	  livingType: number; // 活体类型  1：远近，2: 眨眼, 3：摇头，4: 点头，6：炫彩， 支持多动作，如传入12表示先做远近活体，后做眨眼活体，一次最多支持4组动作 
+	  livingType: number; // 活体类型  1：远近，2: 眨眼, 3：摇头，4: 点头，6：炫彩， 支持多动作，如传入12表示先做远近活体，后做眨眼活体，一次最多支持4组动作
 	  needVideo: boolean; // 是否需要录制视频， 默认为false
 	  useStrictMode: number; // 是否使用严格模式  1：严格模式，0: 非严格模式，非严格模式下，炫彩环境检查不通过会使用其他的活体动作
 	}
-	
+
 	interface configInterface extends authSettingInterface {
 	  cameraDeviceId: number; // 相机ID ， 0 : 后置摄像头，1：前置摄像头 (默认)
 	  autoRedirects: boolean; // 是否跳转到 returnURL 页面，如果为false, 那么不跳转，直接在调用页面返回执行结果， 请固定为false
 	}
-	
+
 	interface HttpResponse {
 	  code: number;
 	  data: any;
 	}
-	
+
 	export default {
 		data() {
 			return {
@@ -71,7 +71,7 @@
 				  {
 					value: '5',
 					name: '张嘴'
-				  }, 
+				  },
 				  {
 					value: '6',
 					name: '炫彩'
@@ -80,7 +80,7 @@
 				livingType: 0
 			}
 		},
-		
+
 		methods: {
 			startLDT: async function () {
 				//初始化设置
@@ -91,7 +91,7 @@
 				      cameraDeviceId: 1,
 					  autoRedirects:false,
 				    };
-				
+
 				/**
 				 * 1. 认证初始化
 				 * @param options(JSONObject), 包括如下字段：
@@ -108,14 +108,14 @@
 				 * }
 				 */
 				console.log(JSON.stringify(configData));
-				let res:EsLivingDetectResult = await UTS_Verify(JSON.stringify(configData));
-				const formData = { initMsg: res.data };  
+				let res:EsLivingDetectResult = await UTS_VerifyInit(JSON.stringify(configData));
+				const formData = { initMsg: res.data };
 				console.log("初始化返回："+JSON.stringify(res));
 				if(res.code!='ELD_SUCCESS'){
 					this.msg ='活体检测初始化失败：'+res.msg
 					return;
 				}
-				
+
 				// 判断是从一砂云接入还是阿里云接入
 				let serverURL = "https://edis.esandcloud.com/gateways?APPCODE=" + ES_APPCODE + "&ACTION=livingdetection/livingdetect/init";
 				SECRET_KEY = ES_SECRET_KEY;
@@ -123,15 +123,15 @@
 					serverURL = 'https://eface.market.alicloudapi.com/init';
 					SECRET_KEY = ALIYUN_APPCODE;
 				}
-				
+
 				let that=this;
-				
+
 				 /**
 				 * 2. 请求阿里云初始化接口获取token（为了保护APPCODE,次端逻辑应该放在服务器端）
 				 * 参考文档：https://market.aliyun.com/products/57124001/cmapi00046021.html#sku=yuncode4002100001
 				 */
 				// 注意，为了保护APPCODE, 这段代码应该写到服务器端，然后经过服务器转发
-			
+
 				uni.request({
 					url:serverURL,
 					method:'POST',
@@ -142,7 +142,6 @@
 					},
 					data:formData,
 					success: async (res) => {
-						// console.log(JSON.stringify(res))
 						if (res.statusCode === 200) {
 								// 请求成功
 							let str:string="";
@@ -154,8 +153,8 @@
 							/**
 							 * 3.发起活体检测
 							 */
-							UTS_StartLivingDetect(str).then(livingDetectResult => {
-								
+							UTS_StartLDT(str).then(livingDetectResult => {
+
 								if(livingDetectResult.code==="ELD_SUCCESS"){
 										console.log(that.msg)
 										/**
@@ -167,7 +166,7 @@
 											serverURL = 'https://eface.market.alicloudapi.com/verify';
 											SECRET_KEY = ALIYUN_APPCODE;
 										}
-										
+
 										uni.request({
 											url: serverURL,
 											method: 'POST',
@@ -186,19 +185,18 @@
 											that.msg = '认证结果'+JSON.stringify(res.data);
 										},
 										});
-										
-										
+
 										UTS_ExitLDT();//退出活体检测
 										// UTS_Exit(); // 退出鸿蒙原生层
 									}
 								});
-							
+
 						} else {
 							// 请求失败
 							let str=res.data;
 							that.msg=JSON.stringify(str)
 							console.log(str);
-							
+
 						}
 					},
 					fail: (err) => {
@@ -208,8 +206,8 @@
 							console.log(str);
 						},
 					});
-					
-					
+
+
 			},
 			checkboxChange: function(evt) {
 				let selectedValues = evt.detail.value;
@@ -220,14 +218,14 @@
 				// 更新数据，确保只存储最多4个选择
 				this.livingType = parseInt(selectedValues.join(''));
 			},
-			
+
 			isChecked: function(value) {
 				return this.livingType.toString().includes(value);
 			},
 			disableCheckbox: function(value) {
 				return this.livingType.toString().length >= 4 && !this.isChecked(value);
 			}
-			
+
 		}
 	}
 </script>
