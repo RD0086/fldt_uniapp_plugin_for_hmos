@@ -20,7 +20,7 @@
 
 <script lang="ts">
 	//导入鸿蒙uts插件中的函数
-	import {UTS_ExitLDT,UTS_VerifyInit,UTS_StartLDT,UTS_Exit,UTS_GetLDTVideo,UTS_RestartLdt,EsLivingDetectResult} from "@/uni_modules/esand-ldt"
+	import {UTS_VerifyInit,UTS_StartLDT,EsLivingDetectResult} from "@/uni_modules/esand-ldt"
 	// TODO 替换成您自己的APPCODE(切勿泄漏), 如何获取APPCODE,可参考：https://esandinfo.yuque.com/docs/share/13ad611e-b9c3-4cf8-a9a8-fe23a419312e?#
 	 let ALIYUN_APPCODE = ''; // 阿里云网关APPCODE
 
@@ -86,7 +86,7 @@
 				//初始化设置
 				const configData: configInterface = {
 				      livingType: parseInt(this.livingType.toString()),
-				      needVideo: false,
+				      needVideo: true,
 				      useStrictMode: 1,
 				      cameraDeviceId: 1,
 					  autoRedirects:false,
@@ -186,8 +186,6 @@
 										},
 										});
 
-										UTS_ExitLDT();//退出活体检测
-										// UTS_Exit(); // 退出鸿蒙原生层
 									}
 								});
 

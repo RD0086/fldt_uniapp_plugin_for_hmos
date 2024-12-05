@@ -6,14 +6,14 @@
 // [Hello UTS](https://gitcode.net/dcloud/hello-uts)
 
 
-// esldtSDK.jar 对应的文档在这里： https://esandinfo.yuque.com/yv6e1k/aa4qsg/xn5mtvuvu59kid58
+// esldtSDK.har 对应的文档在这里： https://esandinfo.yuque.com/yv6e1k/aa4qsg/xn5mtvuvu59kid58
 
 import { EsLDTInitConfig, EsLivingDetectionManager, KEY_NAME_ENUM, EsLivingDetectResult} from 'esldtsdk';
 import router from '@ohos.router';
 
 export {EsLivingDetectResult,KEY_NAME_ENUM,EsLDTInitConfig};
 
-let mng:EsLivingDetectionManager=new EsLivingDetectionManager();
+let mng:EsLivingDetectionManager;
 
 /**
  * 认证初始化（在程序开始之前就初始化
@@ -21,9 +21,9 @@ let mng:EsLivingDetectionManager=new EsLivingDetectionManager();
  * @return EsLivingDetectResult 初始化执行结果 (参考 EsLivingDetectResult)
  */
 export async function UTS_VerifyInit(initConfigString:string):Promise<EsLivingDetectResult>{
+	mng=new EsLivingDetectionManager();
 	let config:EsLDTInitConfig=new EsLDTInitConfig();
 	config.initConfig(initConfigString);
-	console.log(config.getConfig());
 	return await mng.verifyInit(config);
 }
 
@@ -33,39 +33,11 @@ export async function UTS_VerifyInit(initConfigString:string):Promise<EsLivingDe
  * @return 执行结果，可参考 EsLivingDetectResult
  */
 export async function UTS_StartLDT(token:string):Promise<EsLivingDetectResult>{
-	return await mng.startLivingDetect(token);
-}
+	 // 获取执行结果
+	const result = await mng.startLivingDetect(token);
 
-/**
- * 退出活体检测
- */
-export function UTS_ExitLDT(){
-	mng.exit();
-	return;
-}
-
-/**
- * 退出鸿蒙原生层
- */
-export function UTS_Exit(){
-	router.back();
-	return;
-}
-
-/**
- * 得到视频保存在本地的地址
- *
- */
-export function UTS_GetLDTVideo(token:string):string|null{
-	return mng.getLDTVideo(token);
-}
-
-/**
- * 重置sdk的初始化设置
- */
-export function UTS_RestartLdt():boolean{
-	let res=false;
-	mng = new EsLivingDetectionManager();
-	res= true;
-	return res;
+	if (result.code==="ELD_SUCCESS") {
+		router.back();
+	}
+	return result;
 }
