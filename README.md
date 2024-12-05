@@ -4,7 +4,7 @@
 
 演示如下：
 
-![DEMO](https://gitee.com/szrd2023/fldt_uniapp_plugin_for_hmos/raw/master/imgs/demo.gif)
+![DEMO](https://rd-esand-dev.oss-cn-shanghai.aliyuncs.com/imgs/fldt/demo.gif?OSSAccessKeyId=LTAI5tNZJG7Rz5icyxCpxDNg&Expires=1737000877&Signature=ucPrhL2eX6FTdSzLFbJ%2FhcxeLVo%3D)
 
 - H5 体验DEMO链接 ： [https://dev.esandcloud.com/h5demo/esand/living](https://dev.esandcloud.com/h5demo/esand/living)
 - 详细接入文档：[https://esandinfo.yuque.com/yv6e1k/aa4qsg/umpa9zl97is8mx5a](https://esandinfo.yuque.com/yv6e1k/aa4qsg/umpa9zl97is8mx5a)
@@ -23,4 +23,4 @@
 
 Wechat QR CODE :
 
-![QRCODE](https://gitee.com/szrd2023/fldt_uniapp_plugin_for_hmos/raw/master/imgs/qrcode.jpeg)
+![QRCODE](https://rd-esand-dev.oss-cn-shanghai.aliyuncs.com/imgs/fldt/qrcode.jpeg?OSSAccessKeyId=LTAI5tNZJG7Rz5icyxCpxDNg&Expires=1737000906&Signature=cDRxeRlt2AWHVxbmxhwHpOLIU9U%3D)
