@@ -8,7 +8,7 @@ let mng:EsLivingDetectionManager=new EsLivingDetectionManager();
 /**
  * 初始化接口 获得初始化数据
  */
-export async function UTS_Verify(initConfigString:string):Promise<EsLivingDetectResult>{
+export async function UTS_verifyInit(initConfigString:string):Promise<EsLivingDetectResult>{
 	let config:EsLDTInitConfig=new EsLDTInitConfig();
 	config.initConfig(initConfigString);
 	return await mng.verifyInit(config);
@@ -30,7 +30,6 @@ export function UTS_Exit(){
 	router.back();
 	return;
 }
-
 
 /**
  * 得到视频保存在本地的地址

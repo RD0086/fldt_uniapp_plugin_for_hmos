@@ -17,19 +17,19 @@
 	    </div>
 	</view>
 </template>
+
 <script lang="ts">
 	import {UTS_Verify,UTS_StartLivingDetect,UTS_Exit,UTS_GetLDTVideo,UTS_RestartLdt,EsLivingDetectResult} from "@/uni_modules/esand-ldt"
 	// 定义接口
 	interface authSettingInterface {
-	  livingType: number;
-	  needVideo: boolean;
-	  useStrictMode: number;
+	  livingType: number; // 活体类型  1：远近，2: 眨眼, 3：摇头，4: 点头，6：炫彩， 支持多动作，如传入12表示先做远近活体，后做眨眼活体，一次最多支持4组动作 
+	  needVideo: boolean; // 是否需要录制视频， 默认为false
+	  useStrictMode: number; // 是否使用严格模式  1：严格模式，0: 非严格模式，非严格模式下，炫彩环境检查不通过会使用其他的活体动作
 	}
 	
 	interface configInterface extends authSettingInterface {
-	  returnUrl?: string;
-	  cameraDeviceId?: number;
-	  autoRedirects?:boolean;
+	  cameraDeviceId?: number; // 相机ID ， 0 : 后置摄像头，1：前置摄像头 (默认)
+	  autoRedirects?:boolean; // 是否跳转到 returnURL 页面，如果为false, 那么不跳转，直接在调用页面返回执行结果， 请固定为false
 	}
 	
 	interface HttpResponse {
@@ -40,9 +40,9 @@
 	export default {
 		data() {
 			return {
-				title: 'DEMO',
+				title: '人脸活体检测Demo',
 				msg: 'logs',
-				stringParam:"hello world",
+				stringParam:"人脸活体检测",
 				items:
 				 [{
 					value: '1',
@@ -74,30 +74,24 @@
 		},
 		
 		methods: {
-			
-			
-			
-			
 			startLDT: async function () {
 				/**
 				 * 获取初始化token
 				 */
-				
 				const configData: configInterface = {
 				      livingType: parseInt(this.livingType.toString()),
 				      needVideo: false,
 				      useStrictMode: 1,
-				      returnUrl: "pages/index/index",
 				      cameraDeviceId: 1,
-					  autoRedirects:false,
+							autoRedirects:false
 				    };
 					
-				// console.log(parseInt(this.livingType.toString()));
-				let res:EsLivingDetectResult=await UTS_Verify(JSON.stringify(configData));
-				
+				// 认证初始化
+				let res:EsLivingDetectResult=await UTS_verifyInit(JSON.stringify(configData));
 				const url = "https://eface.market.alicloudapi.com/init";
 				const formData = { initMsg: res.data };  
 				
+				// 注意，为了保护APPCODE, 这段代码应该写到服务器端，然后经过服务器转发
 				uni.request({
 					url:url,
 					method:'POST',
@@ -108,51 +102,52 @@
 					},
 					data:formData,
 					success: async (res) => {
-					        if (res.statusCode === 200) {
-					          // 请求成功
-							  let str:string="";
-							  let that = this;
-							  if (typeof res.data === 'string') {
-									str = res.data;
-							    } else {
-									str = JSON.parse(JSON.stringify(res.data)).token;
-								}
-								/**
-								 * 开始人脸检测
-								 */
-								UTS_StartLivingDetect(str).then(res => {
-									that.msg = JSON.stringify(JSON.stringify(res));
-									
-									if(res.code==="ELD_SUCCESS"){
+						if (res.statusCode === 200) {
+								// 请求成功
+							let str:string="";
+							let that = this;
+							if (typeof res.data === 'string') {
+								str = res.data;
+							} else {
+								str = JSON.parse(JSON.stringify(res.data)).token;
+							}
+							/**
+							 * 开始人脸活体检测
+							 */
+							UTS_StartLivingDetect(str).then(res => {
+								that.msg = JSON.stringify(JSON.stringify(res));
+								
+								if(res.code==="ELD_SUCCESS"){
 										console.log(that.msg)
-										UTS_Exit();
+										// 注意，为了保护APPCODE, 这段代码应该写到服务器端，然后经过服务器转发
+										// 获取认证结果
+										
+										UTS_Exit(); // 主动退出页面
 										return ;
 									}
 								});
-								
-					        } else {
-					          // 请求失败
-					          let str=res.data;
-							  console.log(str);
-					        }
+							
+						} else {
+							// 请求失败
+							let str=res.data;
+							console.log(str);
+						}
 					},
 					fail: (err) => {
 					        // 请求出错
-					        },
+						},
 					});
-				// let that = this;
-				// UTS_StartLivingDetect(token);
-				// that.msg = JSON.stringify(res.data);
 			},
 			checkboxChange: function(evt) {
 				let selectedValues = evt.detail.value;
 				if (selectedValues.length > 4) {
-				// 如果选择超过4个，则只保留前4个选择
+					// 如果选择超过4个，则只保留前4个选择
 					selectedValues = selectedValues.slice(0, 4);
 				}
 				// 更新数据，确保只存储最多4个选择
 				this.livingType = parseInt(selectedValues.join(''));
 			},
+			
 			isChecked: function(value) {
 				return this.livingType.toString().includes(value);
 			},
