@@ -6,11 +6,15 @@ export {EsLivingDetectResult,KEY_NAME_ENUM,EsLDTInitConfig};
 let mng:EsLivingDetectionManager=new EsLivingDetectionManager();
 
 /**
- * 初始化接口 获得初始化数据
+ * 认证初始化（在程序开始之前就初始化
+ * @param EsLDTInitConfig 人脸活体检测配置项 (参考 EsLDTInitConfig )
+ * @return EsLivingDetectResult 初始化执行结果 (参考 EsLDTInitConfig)
  */
-export async function UTS_verifyInit(initConfigString:string):Promise<EsLivingDetectResult>{
+
+export async function UTS_Verify(initConfigString:string):Promise<EsLivingDetectResult>{
 	let config:EsLDTInitConfig=new EsLDTInitConfig();
 	config.initConfig(initConfigString);
+	console.log(config.getConfig());
 	return await mng.verifyInit(config);
 }
 
@@ -23,10 +27,17 @@ export async function UTS_StartLivingDetect(token:string):Promise<EsLivingDetect
 
 
 /**
- * 退出人脸检测界面的函数
+ * 退出活体检测
+ */
+export function UTS_ExitLDT(){
+	mng.exit();
+	return;
+}
+
+/**
+ * 退出鸿蒙原生层
  */
 export function UTS_Exit(){
-	mng.exit();
 	router.back();
 	return;
 }
@@ -35,7 +46,7 @@ export function UTS_Exit(){
  * 得到视频保存在本地的地址
  * 
  */
-export function UTS_GetLDTVideo(token:string):string{
+export function UTS_GetLDTVideo(token:string):string|null{
 	return mng.getLDTVideo(token);
 }
 
