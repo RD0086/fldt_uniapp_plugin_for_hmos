@@ -83,10 +83,6 @@
 		
 		methods: {
 			startLDT: async function () {
-				
-				
-				
-				
 				//初始化设置
 				const configData: configInterface = {
 				      livingType: parseInt(this.livingType.toString()),
