@@ -8,9 +8,21 @@
 
 // esfaceauth-release.aar 对应的文档在这里：
 // 引入 Android 原生 SDK 类（由 libs/esfaceauth-release.aar 提供）
-import {EsLivingDetectionManager,EsLDTInitConfig,EsTitleLanguage} from 'EsLivingDetection';
-import {LivingViewStyle,EsLivingDetectResult,EsLivingDetectErrorCode} from 'EsLivingDetection';
+import {EsLivingDetectionManager,EsLDTInitConfig,EsTitleLanguage,LogManager} from 'EsLivingDetection';
+import {LivingViewStyle,EsLivingDetectResult} from 'EsLivingDetection';
 
+
+export const EsLivingDetectErrorCode = {
+    ELD_SUCCESS: "0",
+	ELD_FAILED: "1",
+    ELD_PARAME_ERROR: "2",
+	ELD_EXCEPTION: "3",
+	ELD_TIMEOUT: "4",
+	ELD_PERMISSION: "5",
+	ELD_UNSUPPORT: "6",
+	ELD_CANCEL: "7",
+	ELD_ENV_ERROR: "8"
+	};
 /**
  * 认证初始化（在程序开始之前就初始化
  * @param EsLDTInitConfig 人脸活体检测配置项 (参考 EsLDTInitConfig )
@@ -19,62 +31,77 @@ import {LivingViewStyle,EsLivingDetectResult,EsLivingDetectErrorCode} from 'EsLi
 @UTSAndroid.Suppress("DEPRECATION")
 export async function UTS_VerifyInit(initConfigString:string):Promise<any>{
 	// 解析入参字符串为对象
-	let opts: any = {};
-	try {
-		opts = JSON.parse(initConfigString) as UTSJSONObject;
-	} catch (e) {
-		return { code: "PARSE_ERROR", msg: "initConfigString 不是合法 JSON", data: "" };
-	}
+	let opts = JSON.parse(initConfigString) as UTSJSONObject;
 	// UI 相关配置（可选）
 	// 风格配置
-	if (style!=null) {
-		if (opts.getString("textColor")!= null) {
-			EsLivingDetectionManager.LivingViewStyleInstance().setTextColor(opts.getString("textColor"));}
-		if (opts.getString("progressBgColor")!= null) {
-			EsLivingDetectionManager.LivingViewStyleInstance().setProgressBgColor(opts.getString("progressBgColor"));}
-		if (opts.getString("progressStaGradient")!= null) {
-			EsLivingDetectionManager.LivingViewStyleInstance().setProgressStaGradient(opts.getString("progressStaGradient"));}
-		if (opts.getString("backGroundColor")!= null) {
-			EsLivingDetectionManager.LivingViewStyleInstance().setBackGroundColor(opts.getString("backGroundColor"));}
-		if (opts.getString("progressEndGradient")!= null){ 
-			EsLivingDetectionManager.LivingViewStyleInstance().setProgressEndGradient(opts.getString("progressEndGradient"));}
-		if (opts.getNumber("circleBackWidth") != null) {
-			const circleBackWidth : Number|null=opts.getNumber("circleBackWidth");
-			if(circleBackWidth != null){
-			EsLivingDetectionManager.LivingViewStyleInstance().setCircleBackWidth(circleBackWidth.toInt());}
-			}
-		if (opts.getString("progressColor")!= null) {
-			EsLivingDetectionManager.LivingViewStyleInstance().setProgressColor(opts.getString("progressColor"));}
-		if (opts.getString("exitIcon")!= null) {
-			EsLivingDetectionManager.LivingViewStyleInstance().setExitIcon(opts.getString("exitIcon"));}
+	let textcolor : string|null = opts.getString("textColor");
+	if (textcolor != null) {
+		EsLivingDetectionManager.livingViewStyleInstance().setTextColor(textcolor!);
 	}
 
+	let progressBgColor : string|null = opts.getString("progressBgColor");
+	if (progressBgColor != null) {
+		EsLivingDetectionManager.livingViewStyleInstance().setProgressBgColor(progressBgColor!);
+	}
+
+	let progressStaGradient : string|null = opts.getString("progressStaGradient");
+	if (progressStaGradient != null) {
+		EsLivingDetectionManager.livingViewStyleInstance().setProgressStaGradient(progressStaGradient!);
+	}
+
+	let backGroundColor : string|null = opts.getString("backGroundColor");
+	if (backGroundColor != null) {
+		EsLivingDetectionManager.livingViewStyleInstance().setBackGroundColor(backGroundColor!);
+	}
+
+	let progressEndGradient : string|null = opts.getString("progressEndGradient");
+	if (progressEndGradient != null) {
+		EsLivingDetectionManager.livingViewStyleInstance().setProgressEndGradient(progressEndGradient!);
+	}
+
+	// let circleBackWidth : Number|null = opts.getNumber("circleBackWidth");
+	// if (circleBackWidth != null) {
+	// 	EsLivingDetectionManager.livingViewStyleInstance().setCircleBackWidth(circleBackWidth.toInt());
+	// }
+
+	// let progressColor : string|null = opts.getString("progressColor");
+	// if (progressColor != null) {
+	// 	EsLivingDetectionManager.livingViewStyleInstance().setProgressColor(progressColor!);
+	// }
+
+	// let exitIcon : string|null = opts.getString("exitIcon");
+	// if (exitIcon != null) {
+	// 	EsLivingDetectionManager.livingViewStyleInstance().setExitIcon(exitIcon!);
+	// }
+
 	// 其他配置
-	const isRecordVideo : Boolean|null=opts.getBoolean("isRecordVideo");
+	let isRecordVideo : Bool|null=opts.getBoolean("isRecordVideo");
 	if (isRecordVideo != null) {
-		EsLivingDetectionManager.LivingConfigInstance().SetIsRecordLdtVideo(isRecordVideo);
+		const isT =isRecordVideo!;
+		EsLivingDetectionManager.livingConfigInstance().setIsRecordLdtVideo(isT);
 	}
-	const isAutoUploadVerify : Boolean|null=opts.getBoolean("isAutoUploadVerify");
+	let isAutoUploadVerify : Bool|null=opts.getBoolean("isAutoUploadVerify");
 	if (isAutoUploadVerify != null) {
-		EsLivingDetectionManager.LivingConfigInstance().SetIsAutoUploadVerifyMsg(isAutoUploadVerify);
+		const isT =isAutoUploadVerify!;
+		EsLivingDetectionManager.livingConfigInstance().setIsAutoUploadVerifyMsg(isT);
 	}
-	const takeMultiImg : Boolean|null=opts.getBoolean("takeMultiImg");
+	let takeMultiImg : Bool|null=opts.getBoolean("takeMultiImg");
 	if (takeMultiImg != null) {
-		EsLivingDetectionManager.LivingConfigInstance().SetIsSaveImgEveryType(takeMultiImg);
+		EsLivingDetectionManager.livingConfigInstance().setIsSaveImgEveryType(takeMultiImg!);
 	}
-	const uploadLogOnError : Boolean|null=opts.getBoolean("uploadLogOnError");
-	if (uploadLogOnError != null) {
-		if(uploadLogOnError){LogManager.startUpLog();}
-	}
-	const navigate : Boolean|null=opts.getBoolean("navigate");
+	// const uploadLogOnError : Boolean|null=opts.getBoolean("uploadLogOnError");
+	// if (uploadLogOnError != null) {
+	// 	if(uploadLogOnError){LogManager.startUpLog();}
+	// }
+	let navigate : Bool|null=opts.getBoolean("navigate");
 	if (navigate != null) {
-		EsLivingDetectionManager.LivingConfigInstance().SetNavigateShow(navigate);
+		EsLivingDetectionManager.livingConfigInstance().setNavigateShow(navigate!);
 	}
 	return new Promise<any>((resolve) => {
-		}// livingType
-		const livingType : Number|null=opts.getNumber("livingType");
+		// livingType
+		let livingType = opts.getNumber("livingType");
 		if (livingType != null) {
-			const result= EsLivingDetectionManager.verifyInit(livingType); // 原生调用立即返回结果
+			const result= EsLivingDetectionManager.verifyInit(livingType!.toInt32()); // 原生调用立即返回结果
 			// 可以直接在这里处理，因为 verifyInit 是同步方法
 			let code = result.getCodeStr();
 			if (code == null) {
@@ -118,50 +145,45 @@ export async function UTS_StartLDT(inputMsg:string):Promise<any>{
 	return new Promise<any>((resolve) => {
 	
 	            const options = JSON.parse(inputMsg) as UTSJSONObject;
-	            const token = options.getString("token");
+	            const token :String|null= options.getString("token");
 	            if (token == null) {
 	                let object = {
-						code:EsLivingDetectErrorCode.ELD_PARAME_ERROR.toString(),
+						code:EsLivingDetectErrorCode.ELD_PARAME_ERROR,
 						msg:"传入token为空"
 					}
 	                resolve(object);
 	                return;
-	            }
-	
-	            let cameraID = options.getString("cameraID");
-	            if (cameraID != null) {
-	                if (cameraID.toUpperCase() === "FRONT") cameraID = "1";
-	                else if (cameraID.toUpperCase() === "REAR") cameraID = "0";
-	                else cameraID = "1";
-	            } else {
-	                cameraID = "1";
-	            }
-
-				const use_cameraID = cameraID;
-				if (mng == null) {
-					let object = {
-						code:EsLivingDetectErrorCode.ELD_FAILED.toString(),
-						msg:"请先执行初始化"
-					}
-				    resolve(object);
-				    return;
+	            }else{
+					const use_token :String = token!;
+					  // 调用 SDK
+									let viewController =UTSiOS.getCurrentViewController();
+					 // 调用类方法 startDetect2
+					 // 创建 iOS block 回调
+					//   const callbackBlock = UTSiOS.createBlock("EsLivingDetectCallback", (ldtResult: EsLivingDetectResult) => {
+										// const result = {
+										// 	code: ldtResult.getCodeStr(),
+										// 	data: ldtResult.data,
+										// 	msg: ldtResult.msg,
+										// 	token: ldtResult.token
+										// };
+										// resolve(result);
+									 // });
+											
+									// 调用类方法
+									EsLivingDetectionManager.startDetect2(use_token,
+									viewController=viewController, 
+									callback=function(ldtResult : EsLivingDetectResult){
+										const result = {
+											code: ldtResult.getCodeStr(),
+											data: ldtResult.data,
+											msg: ldtResult.msg,
+											token: ldtResult.token
+										};
+										resolve(result);
+									}, 
+									windowSwitchType =2);
 				}
-	            // 调用 SDK
-				let viewController =UTSiOS.getCurrentViewController();
-	           // 调用类方法 startDetect2
-			   EsLivingDetectionManager.startDetect2(token, 
-													viewController: viewController, 
-													callback: { ldtResult in
-				   // 转成字典返回
-				   let result: [String: Any] = [
-					   "code": ldtResult.getCodeStr() ,
-					   "data": ldtResult.data,
-					   "msg": ldtResult.msg,
-					   "token": ldtResult.token
-				   ]
-				   callback(result)
-				   
-			   }, windowSwitchType: 2)
+				
 				});
 	        // });
 }
