@@ -1,0 +1,167 @@
+// ### 开发文档
+// [UTS 语法](https://uniapp.dcloud.net.cn/tutorial/syntax-uts.html)
+// [UTS API插件](https://uniapp.dcloud.net.cn/plugin/uts-plugin.html)
+// [UTS uni-app兼容模式组件](https://uniapp.dcloud.net.cn/plugin/uts-component.html)
+// [UTS 标准模式组件](https://doc.dcloud.net.cn/uni-app-x/plugin/uts-vue-component.html)
+// [Hello UTS](https://gitcode.net/dcloud/hello-uts)
+
+
+// esfaceauth-release.aar 对应的文档在这里：
+// 引入 Android 原生 SDK 类（由 libs/esfaceauth-release.aar 提供）
+import {EsLivingDetectionManager,EsLDTInitConfig,EsTitleLanguage} from 'EsLivingDetection';
+import {LivingViewStyle,EsLivingDetectResult,EsLivingDetectErrorCode} from 'EsLivingDetection';
+
+/**
+ * 认证初始化（在程序开始之前就初始化
+ * @param EsLDTInitConfig 人脸活体检测配置项 (参考 EsLDTInitConfig )
+ * @return EsLivingDetectResult 初始化执行结果 (参考 EsLivingDetectResult)
+ */
+@UTSAndroid.Suppress("DEPRECATION")
+export async function UTS_VerifyInit(initConfigString:string):Promise<any>{
+	// 解析入参字符串为对象
+	let opts: any = {};
+	try {
+		opts = JSON.parse(initConfigString) as UTSJSONObject;
+	} catch (e) {
+		return { code: "PARSE_ERROR", msg: "initConfigString 不是合法 JSON", data: "" };
+	}
+	// UI 相关配置（可选）
+	// 风格配置
+	if (style!=null) {
+		if (opts.getString("textColor")!= null) {
+			EsLivingDetectionManager.LivingViewStyleInstance().setTextColor(opts.getString("textColor"));}
+		if (opts.getString("progressBgColor")!= null) {
+			EsLivingDetectionManager.LivingViewStyleInstance().setProgressBgColor(opts.getString("progressBgColor"));}
+		if (opts.getString("progressStaGradient")!= null) {
+			EsLivingDetectionManager.LivingViewStyleInstance().setProgressStaGradient(opts.getString("progressStaGradient"));}
+		if (opts.getString("backGroundColor")!= null) {
+			EsLivingDetectionManager.LivingViewStyleInstance().setBackGroundColor(opts.getString("backGroundColor"));}
+		if (opts.getString("progressEndGradient")!= null){ 
+			EsLivingDetectionManager.LivingViewStyleInstance().setProgressEndGradient(opts.getString("progressEndGradient"));}
+		if (opts.getNumber("circleBackWidth") != null) {
+			const circleBackWidth : Number|null=opts.getNumber("circleBackWidth");
+			if(circleBackWidth != null){
+			EsLivingDetectionManager.LivingViewStyleInstance().setCircleBackWidth(circleBackWidth.toInt());}
+			}
+		if (opts.getString("progressColor")!= null) {
+			EsLivingDetectionManager.LivingViewStyleInstance().setProgressColor(opts.getString("progressColor"));}
+		if (opts.getString("exitIcon")!= null) {
+			EsLivingDetectionManager.LivingViewStyleInstance().setExitIcon(opts.getString("exitIcon"));}
+	}
+
+	// 其他配置
+	const isRecordVideo : Boolean|null=opts.getBoolean("isRecordVideo");
+	if (isRecordVideo != null) {
+		EsLivingDetectionManager.LivingConfigInstance().SetIsRecordLdtVideo(isRecordVideo);
+	}
+	const isAutoUploadVerify : Boolean|null=opts.getBoolean("isAutoUploadVerify");
+	if (isAutoUploadVerify != null) {
+		EsLivingDetectionManager.LivingConfigInstance().SetIsAutoUploadVerifyMsg(isAutoUploadVerify);
+	}
+	const takeMultiImg : Boolean|null=opts.getBoolean("takeMultiImg");
+	if (takeMultiImg != null) {
+		EsLivingDetectionManager.LivingConfigInstance().SetIsSaveImgEveryType(takeMultiImg);
+	}
+	const uploadLogOnError : Boolean|null=opts.getBoolean("uploadLogOnError");
+	if (uploadLogOnError != null) {
+		if(uploadLogOnError){LogManager.startUpLog();}
+	}
+	const navigate : Boolean|null=opts.getBoolean("navigate");
+	if (navigate != null) {
+		EsLivingDetectionManager.LivingConfigInstance().SetNavigateShow(navigate);
+	}
+	return new Promise<any>((resolve) => {
+		}// livingType
+		const livingType : Number|null=opts.getNumber("livingType");
+		if (livingType != null) {
+			const result= EsLivingDetectionManager.verifyInit(livingType); // 原生调用立即返回结果
+			// 可以直接在这里处理，因为 verifyInit 是同步方法
+			let code = result.getCodeStr();
+			if (code == null) {
+				code = "";
+			}
+			let msg = result.msg;
+			if (msg == null) {
+				msg = "";
+			}
+			let data =result.data;
+			if (data == null) {
+				data = "";
+			}
+			let object = {
+				code: code,
+				msg:  msg,
+				data: data
+			};
+			resolve(object);
+		}
+		else{
+			let object = {
+				code: "ELD_FAILED",
+				msg:  "livingType为空",
+				data: ""
+			};
+			resolve(object);
+		}
+		
+	});
+}
+
+/**
+ * 人脸检测接口 跳转到人脸检测界面
+ * @param inputMsg 服务器返回的 token 数据
+ * @return 执行结果，可参考 EsLivingDetectResult
+ */
+@UTSAndroid.Suppress("DEPRECATION")
+export async function UTS_StartLDT(inputMsg:string):Promise<any>{
+	 //获取执行结果
+	return new Promise<any>((resolve) => {
+	
+	            const options = JSON.parse(inputMsg) as UTSJSONObject;
+	            const token = options.getString("token");
+	            if (token == null) {
+	                let object = {
+						code:EsLivingDetectErrorCode.ELD_PARAME_ERROR.toString(),
+						msg:"传入token为空"
+					}
+	                resolve(object);
+	                return;
+	            }
+	
+	            let cameraID = options.getString("cameraID");
+	            if (cameraID != null) {
+	                if (cameraID.toUpperCase() === "FRONT") cameraID = "1";
+	                else if (cameraID.toUpperCase() === "REAR") cameraID = "0";
+	                else cameraID = "1";
+	            } else {
+	                cameraID = "1";
+	            }
+
+				const use_cameraID = cameraID;
+				if (mng == null) {
+					let object = {
+						code:EsLivingDetectErrorCode.ELD_FAILED.toString(),
+						msg:"请先执行初始化"
+					}
+				    resolve(object);
+				    return;
+				}
+	            // 调用 SDK
+				let viewController =UTSiOS.getCurrentViewController();
+	           // 调用类方法 startDetect2
+			   EsLivingDetectionManager.startDetect2(token, 
+													viewController: viewController, 
+													callback: { ldtResult in
+				   // 转成字典返回
+				   let result: [String: Any] = [
+					   "code": ldtResult.getCodeStr() ,
+					   "data": ldtResult.data,
+					   "msg": ldtResult.msg,
+					   "token": ldtResult.token
+				   ]
+				   callback(result)
+				   
+			   }, windowSwitchType: 2)
+				});
+	        // });
+}

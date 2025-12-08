@@ -1,0 +1,6 @@
+{
+  "frameworks": [
+    "EsLivingDetection.framework"   // 本地 framework 名称
+  ]
+}
+

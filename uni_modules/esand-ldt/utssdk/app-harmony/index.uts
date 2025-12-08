@@ -20,11 +20,14 @@ let mng:EsLivingDetectionManager;
  * @param EsLDTInitConfig 人脸活体检测配置项 (参考 EsLDTInitConfig )
  * @return EsLivingDetectResult 初始化执行结果 (参考 EsLivingDetectResult)
  */
-export async function UTS_VerifyInit(initConfigString:string):Promise<EsLivingDetectResult>{
+export async function UTS_VerifyInit(initConfigString:string):Promise<any>{
 	mng=new EsLivingDetectionManager();
 	let config:EsLDTInitConfig=new EsLDTInitConfig();
 	config.initConfig(initConfigString);
-	return await mng.verifyInit(config);
+	const verify_result =  await mng.verifyInit(config);
+	return {code:verify_result.code,
+			msg:verify_result.msg,
+			data:verify_result.data};
 }
 
 /**
@@ -32,12 +35,16 @@ export async function UTS_VerifyInit(initConfigString:string):Promise<EsLivingDe
  * @param token 服务器返回的 token 数据
  * @return 执行结果，可参考 EsLivingDetectResult
  */
-export async function UTS_StartLDT(token:string):Promise<EsLivingDetectResult>{
+export async function UTS_StartLDT(token:string):Promise<any>{
 	 // 获取执行结果
-	const result = await mng.startLivingDetect(token);
+	const ldt_result = await mng.startLivingDetect(token);
 
 	if (result.code==="ELD_SUCCESS") {
 		router.back();
 	}
-	return result;
+	return {code:ldt_resultcode,
+			msg:ldt_result.msg,
+			data:ldt_result.data,
+			token:ldt_result.token,
+			videopath:ldt_result.videopath};
 }

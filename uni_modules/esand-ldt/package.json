@@ -28,7 +28,10 @@
     "npmurl": ""
   },
   "uni_modules": {
-    "dependencies": [],
-    "encrypt": []
-  }
+      "type": "uni-plugin",
+      "dependencies": [],
+      "encrypt": [],
+      "platforms": {
+      }
+    }
 }
