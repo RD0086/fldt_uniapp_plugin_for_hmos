@@ -108,7 +108,7 @@
 				 * }
 				 */
 				console.log(JSON.stringify(configData));
-				let res:EsLivingDetectResult = await UTS_VerifyInit(JSON.stringify(configData));
+				let res:any = await UTS_VerifyInit(JSON.stringify(configData));
 				const formData = { initMsg: res.data };
 				console.log("初始化返回："+JSON.stringify(res));
 				if(res.code!='ELD_SUCCESS'){
@@ -144,16 +144,21 @@
 					success: async (res) => {
 						if (res.statusCode === 200) {
 								// 请求成功
-							let str:string="";
+							let str:any;
 							if (typeof res.data === 'string') {
-								str = res.data;
+								 str = {
+									token:JSON.parse(JSON.stringify(res.data)).token
+								};
 							} else {
-								str = JSON.parse(JSON.stringify(res.data)).token;
+								 str = {
+									token:JSON.parse(JSON.stringify(res.data)).token
+								};
 							}
 							/**
 							 * 3.发起活体检测
 							 */
-							UTS_StartLDT(str).then(livingDetectResult => {
+							console.log("输入参数："+JSON.stringify(str));
+							UTS_StartLDT(JSON.stringify(str)).then(livingDetectResult => {
 
 								if(livingDetectResult.code==="ELD_SUCCESS"){
 										console.log(that.msg)

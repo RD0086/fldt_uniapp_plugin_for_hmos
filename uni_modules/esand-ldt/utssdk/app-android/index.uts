@@ -23,10 +23,10 @@ import EsLivingDetectErrorCode from 'com.esandinfo.livingdetection.constants.EsL
 // import com.esandinfo.livingdetection.bean.LivingViewStyle;
 // import com.esandinfo.livingdetection.constants.EsLivingDetectErrorCode;
 // 允许为空，实际调用前会保证实例化
-// let mng: EsLivingDetectionManager|null = null;
+let mng: EsLivingDetectionManager|null = null;
 
-	const activity = UTSAndroid.getUniActivity();
-const mng: EsLivingDetectionManager= new EsLivingDetectionManager(activity);
+// 	const activity = UTSAndroid.getUniActivity();
+// const mng: EsLivingDetectionManager= new EsLivingDetectionManager(activity);
 
 /**
  * 认证初始化（在程序开始之前就初始化
@@ -43,8 +43,8 @@ export async function UTS_VerifyInit(initConfigString:string):Promise<any>{
 		return { code: "PARSE_ERROR", msg: "initConfigString 不是合法 JSON", data: "" };
 	}
 
-	// const activity = UTSAndroid.getUniActivity();
-	// mng = new EsLivingDetectionManager(activity);
+	const activity = UTSAndroid.getUniActivity();
+	mng = new EsLivingDetectionManager(activity);
 
 	// 构建原生配置
 	const config = new EsLDTInitConfig();
@@ -110,7 +110,7 @@ export async function UTS_VerifyInit(initConfigString:string):Promise<any>{
 			resolve({ code: "ELD_FAILED", msg: "请先初始化" });
 			return;
 		}
-		const result= mng.verifyInit(config); // 原生调用立即返回结果
+		const result= mng!.verifyInit(config); // 原生调用立即返回结果
 		// 可以直接在这里处理，因为 verifyInit 是同步方法
 		
 		let code = result.getCode().toString();
@@ -178,7 +178,7 @@ export async function UTS_StartLDT(inputMsg:string):Promise<any>{
 				    return;
 				}
 	            // 调用 SDK
-	            mng.startLivingDetect(use_cameraID, token, function(result: EsLivingDetectResult){
+	            mng!.startLivingDetect(use_cameraID, token, function(result: EsLivingDetectResult){
 	                // onFinish: (result: EsLivingDetectResult) => 
 	
 	                    let videoPath = "";
