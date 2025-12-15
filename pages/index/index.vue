@@ -77,7 +77,7 @@
 					name: '炫彩'
 				  }
 				],
-				livingType: 0
+				livingType: 6
 			}
 		},
 
