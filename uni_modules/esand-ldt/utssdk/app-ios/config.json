@@ -2,6 +2,6 @@
   "frameworks": [
     "libz.1.2.5.tbd","JavaScriptCore","Accelerate","AVFoundation","UIKit"
   ],
-  "dploymentTarget":"12.0"
+  "dploymentTarget":"12.0","deploymentTarget": "12"
 }
 

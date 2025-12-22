@@ -1,10 +1,14 @@
 {
   "id": "esand-ldt",
   "displayName": "人脸活体检测插件",
-  "version": "1.0.1",
-  "description": "鸿蒙Next人脸活体检测  (眨眼，摇头，点头，张嘴，远近，炫彩)，多动作组合，前后端结合，可用于实人认证，人脸识别等场景",
+  "version": "1.1.1",
+  "description": "人脸活体检测  (眨眼，摇头，点头，张嘴，远近，炫彩)，多动作组合，前后端结合，支持A,ndroid , IOS, 鸿蒙Next , 可用于实人认证，人脸识别等场景",
   "keywords": [
-    "人脸活体检测 人脸识别 实人认证 炫彩 眨眼"
+    "人脸活体检测",
+    "人脸识别",
+    "实人认证",
+    "炫彩",
+    "眨眼"
 ],
   "repository": "https://github.com/RD0086/fldt_uniapp_plugin_for_hmos",
   "engines": {
@@ -21,9 +25,9 @@
       }
     },
     "declaration": {
-      "ads": "",
-      "data": "",
-      "permissions": ""
+      "ads": "不包含",
+      "data": "将会采集用户人脸照片，用于活体检测/人脸识别，具体以业务为准",
+      "permissions": "   - Android: `android.permission.CAMERA`\n   - iOS: `NSCameraUsageDescription`\n   - 鸿蒙: 相机权限配置"
     },
     "npmurl": ""
   },
@@ -31,7 +35,18 @@
       "type": "uni-plugin",
       "dependencies": [],
       "encrypt": [],
-      "platforms": {
+    "platforms": {
+        "client": {
+            "App": {
+                "app-android": {
+                    "minVersion": "23"
+                },
+                "app-harmony": "y",
+                "app-ios": {
+                    "minVersion": "12"
+                }
+            }
+        }
       }
     }
 }
