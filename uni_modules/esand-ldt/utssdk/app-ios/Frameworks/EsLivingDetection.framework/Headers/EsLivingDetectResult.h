@@ -43,7 +43,11 @@ typedef enum  EsLivingDetectErrorCode {
     /**
      * 主动退出
      */
-    ELD_CANCEL,
+    ELD_CANCEL,   
+     /**
+     * 环境异常
+     */
+    ELD_ENV_ERROR,
 } EsLivingDetectErrorCode;
 
 /**

@@ -7,6 +7,12 @@
 
 #import <Foundation/Foundation.h>
 
+// OCR功能控制宏，默认不编译
+// 如需启用OCR功能，请在编译时定义 ENABLE_OCR=1
+#ifndef ENABLE_OCR
+#define ENABLE_OCR 0
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef enum CRYPT_KEY_TYPE{
@@ -100,6 +106,7 @@ static NSString* BaseURL;
 
 -(void) SetUseStrictMode:(BOOL)value;
 
+#if ENABLE_OCR
 -(void) SetOcrIncFront:(BOOL)value;
 
 -(BOOL) GetOcrIncFront;
@@ -111,6 +118,7 @@ static NSString* BaseURL;
 -(void) SetWithOcr:(BOOL)value;
 
 -(BOOL) GetWithOcr;
+#endif // ENABLE_OCR
 
 -(void) SetNavigateShow:(BOOL)value;
 
@@ -133,6 +141,16 @@ static NSString* BaseURL;
  * 语言设置
  */
 - (int) GetLanguage;
+
+/**
+ * 设置 OSS Policy
+ */
+- (void) SetOssPolicy:(NSDictionary*)value;
+
+/**
+ * 获取 OSS Policy
+ */
+- (NSDictionary*) GetOssPolicy;
 @end
 
 NS_ASSUME_NONNULL_END
